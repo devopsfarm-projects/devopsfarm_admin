@@ -1,27 +1,36 @@
+// /src/App
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginForm from './login/Login.tsx'; // Import the LoginForm component
-import { AuthProvider } from './context/AuthContext.tsx'; // Import the AuthProvider
-import './App.css'; 
-import Getstart from './components/Getstart.tsx';
-import Navbar from './navbar/navbar.jsx'
-import Userdata from './userdata/userdata.jsx';
-import Certificate from './Certificate Data/certificate.jsx'
-import Coursedata from './coursedata/coursedata.jsx'
-const App: React.FC = () => {
+import {  Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/authContext'; // Make sure this is the correct path
+import Login from './login/Login';
+import Register from './login/Register';
+import CourseList from './components/CourseList';
+import ProtectedRoute from './components/ProtectedRoute';
+import Certificates from './Certificates/Certificates';
+import Users from './Users/Users';
+import Navbar from "./navbar/navbar"
+const App = () => {
   return (
-    <AuthProvider>
-      <Router>
-        <Navbar/>
+    // <Router>
+      <AuthProvider> {/* Ensure this is inside Router */}
+      <Navbar/>
         <Routes>
-          <Route path="/" element={<Getstart />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/userdata" element={<Userdata />} />
-          <Route path="/certificate" element={<Certificate />} />
-          <Route path="/coursedata" element={<Coursedata />} />
+          
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/certigicates" element={<Certificates />} />
+          <Route path="/users" element={<Users />} />
+          <Route
+            path="/courses"
+            element={
+               <ProtectedRoute>
+                <CourseList />
+               </ProtectedRoute>
+            }
+          />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    // </Router>
   );
 };
 
