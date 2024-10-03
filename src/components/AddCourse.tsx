@@ -10,7 +10,7 @@ const AddCourse = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    await createCourse(token || '', { title, description, duration });
+    await createCourse(token ?? '', { title, description, duration });
     // refresh course list or redirect
   };
 

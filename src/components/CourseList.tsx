@@ -9,7 +9,7 @@ const CourseList = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       const token = localStorage.getItem('token');
-      const data: Course[] = await getCourses(token || ''); // Explicitly type the response
+      const data: Course[] = await getCourses(token ?? ''); // Explicitly type the response
       setCourses(data);
     };
     fetchCourses();

@@ -1,171 +1,28 @@
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-
-// function Coursedata() {
-//     const [data, setData] = useState([]);
-//       const [newItem, setNewItem] = useState("");
-//       const [imageFile, setImageFile] = useState(null);
-//       const [imageAlt, setImageAlt] = useState("");
-//       const [imageName, setImageName] = useState("");
-//       const [uploading, setUploading] = useState(false);
-//       const [error, setError] = useState("");
-//       const [success, setSuccess] = useState("");
-    
-//       // Fetch data from the backend
-//       const fetchData = async () => {
-//         try {
-//           const response = await axios.get('http://localhost:5000/courses');
-//           setData(response.data);
-//         } catch (error) {
-//           console.error('Error fetching data:', error);
-//           setError("Failed to fetch data.");
-//         }
-//       };
-    
-//       useEffect(() => {
-//         fetchData();
-//       }, []);
-    
-//       // Handle adding new data with image upload
-//       const addData = async () => {
-//         if (!newItem || !imageFile || !imageAlt || !imageName) {
-//           setError("Please fill in all fields and select an image.");
-//           return;
-//         }
-    
-//         setUploading(true);
-//         setError("");
-//         setSuccess("");
-    
-//         const formData = new FormData();
-//         formData.append('name', newItem);
-//         formData.append('image', imageFile); 
-//         formData.append('imageAlt', imageAlt);
-//         formData.append('imageName', imageName);
-        
-    
-//         try {
-//           const response = await axios.post('http://localhost:5000/api/courses', formData, {
-//             headers: {
-//               'Content-Type': 'multipart/form-data',
-//             },
-//           });
-//           setData([...data, response.data]);
-//           setNewItem("");
-//           setImageFile(null);
-//           setImageAlt("");
-//           setImageName("");
-//           setSuccess("Item added successfully!");
-//         } catch (error) {
-//           console.error('Error adding data:', error);
-//           setError("Failed to add item.");
-//         } finally {
-//           setUploading(false);
-//         }
-//       };
-    
-//       // Handle deleting data by ID
-//       const deleteData = async (id) => {
-//         try {
-//           await axios.delete(`http://localhost:5000/api/courses/${id}`);
-//           setData(data.filter(item => item._id !== id));
-//         } catch (error) {
-//           console.error('Error deleting data:', error);
-//           setError("Failed to delete item.");
-//         }
-//       };
-    
-      
-    
-//       return (
-//         <div className=" justify-center items-center relative">
-//           <h1 className=' absolute'>Course data</h1>
-//           <input
-//             type="text"
-//             value={newItem}
-//             onChange={(e) => setNewItem(e.target.value)}
-//             placeholder="Course Name"
-//           />
-//           <input
-//             type="file"
-//             onChange={(e) => setImageFile(e.target.files[0])}
-//           />
-//           {imageFile && (
-//             <div>
-//               <h3>Image Preview:</h3>
-//               <img src={URL.createObjectURL(imageFile)} alt="Preview" style={{ width: '100px', height: '100px' }} />
-//             </div>
-//           )}
-//           <input
-//             type="text"
-//             value={imageAlt}
-//             onChange={(e) => setImageAlt(e.target.value)}
-//             placeholder="Enter image alt text"
-//           />
-//           <input
-//             type="text"
-//             value={imageName}
-//             onChange={(e) => setImageName(e.target.value)}
-//             placeholder="Course Content"
-//           />
-//           <button onClick={addData} disabled={uploading}>
-//             {uploading ? "Uploading..." : "Add Item"}
-//           </button>
-//           {error && <p style={{ color: 'red' }}>{error}</p>}
-//           {success && <p style={{ color: 'green' }}>{success}</p>}
-//           <table>
-//   <thead>
-//     <tr>
-//       <th>Name</th>
-//       <th>Image</th>
-//       <th>Action</th>
-//     </tr>
-//   </thead>
-//   <tbody>
-//     {data.map((item) => (
-//       <tr key={item._id}>
-//         <td>{item.name} - {item.imageName}</td>
-//         <td>
-//           <img
-//             src={`http://localhost:5000/uploads/${item.image}`}
-//             alt={item.imageAlt}
-//             style={{ width: '50px' }}
-//           />
-//         </td>
-//         <td>
-//           <button onClick={() => deleteData(item._id)}>Delete</button>
-//         </td>
-//       </tr>
-//     ))}
-//   </tbody>
-// </table>
-
-//         </div>
-//       );
-//     }
-    
-
-// export default Coursedata;
-
-
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-function Coursedata() {
-    const [data, setData] = useState([]);
-    const [newItem, setNewItem] = useState("");
-    const [imageFile, setImageFile] = useState(null);
-    const [imageAlt, setImageAlt] = useState("");
-    const [imageName, setImageName] = useState("");
-    const [uploading, setUploading] = useState(false);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [editItemId, setEditItemId] = useState(null); // For tracking which item is being edited
+interface Course {
+    _id: string;
+    title: string; 
+    description: string; 
+    duration: string; 
+    image: string; 
+}
 
-    // Fetch data from the backend
+function Coursedata() {
+    const [data, setData] = useState<Course[]>([]);
+    const [newItem, setNewItem] = useState<string>("");
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imageAlt, setImageAlt] = useState<string>("");
+    const [imageName, setImageName] = useState<string>("");
+    const [uploading, setUploading] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
+    const [success, setSuccess] = useState<string>("");
+    const [editItemId, setEditItemId] = useState<string | null>(null);
+
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/courses');
+            const response = await axios.get<Course[]>('http://localhost:5000/courses');
             setData(response.data);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -177,46 +34,40 @@ function Coursedata() {
         fetchData();
     }, []);
 
-    // Handle adding new data with image upload
     const addData = async () => {
         if (!newItem || !imageFile || !imageAlt || !imageName) {
-          setError("Please fill in all fields and select an image.");
-          return;
+            setError("Please fill in all fields and select an image.");
+            return;
         }
-      
+    
         setUploading(true);
         setError("");
         setSuccess("");
-      
-        const formData = new FormData();
-        formData.append('title', newItem); // Assuming newItem is the title
-        formData.append('description', imageName); // Assuming imageName is the description
-        formData.append('duration', imageAlt); // Assuming imageAlt is the duration
-        formData.append('image', imageFile); // The image file
-      
-        try {
-          const response = await axios.post('http://localhost:5000/courses', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-          setData([...data, response.data]);
-          setNewItem("");
-          setImageFile(null);
-          setImageAlt("");
-          setImageName("");
-          setSuccess("Item added successfully!");
-        } catch (error) {
-          console.error('Error adding data:', error);
-          setError(error.response?.data?.message || "Failed to add item.");
-        } finally {
-          setUploading(false);
-        }
-      };
-      
 
-    // Handle editing data
-    const editData = async (id: never) => {
+        const formData = new FormData();
+        formData.append('title', newItem);
+        formData.append('description', imageName);
+        formData.append('duration', imageAlt);
+        formData.append('image', imageFile);
+    
+        try {
+            await axios.post<Course>('http://localhost:5000/courses', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            await fetchData();
+            resetForm();
+            setSuccess("Item added successfully!");
+        } catch (error: any) {
+            console.error('Error adding data:', error);
+            setError(error.response?.data?.message || "Failed to add item.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const editData = async (id: string) => {
         if (!newItem || !imageAlt || !imageName) {
             setError("Please fill in all fields.");
             return;
@@ -227,19 +78,18 @@ function Coursedata() {
         setSuccess("");
 
         const formData = new FormData();
-        formData.append('name', newItem);
-        if (imageFile) formData.append('image', imageFile); // Only append if an image is selected
-        formData.append('imageAlt', imageAlt);
-        formData.append('imageName', imageName);
+        formData.append('title', newItem); // Updated to use 'title'
+        if (imageFile) formData.append('image', imageFile);
+        formData.append('description', imageName); // Updated to use 'description'
+        formData.append('duration', imageAlt); // Updated to use 'duration'
 
         try {
-            const response = await axios.put(`http://localhost:5000/courses/${id}`, formData, {
+            const response = await axios.put<Course>(`http://localhost:5000/courses/${id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            const updatedData = data.map(item => item._id === id ? response.data : item);
-            setData(updatedData);
+            setData(prevData => prevData.map(item => item._id === id ? response.data : item));
             resetForm();
             setSuccess("Item edited successfully!");
         } catch (error) {
@@ -250,11 +100,10 @@ function Coursedata() {
         }
     };
 
-    // Handle deleting data by ID
-    const deleteData = async (id: any) => {
+    const deleteData = async (id: string) => {
         try {
             await axios.delete(`http://localhost:5000/courses/${id}`);
-            setData(data.filter(item => item._id !== id));
+            setData(prevData => prevData.filter(item => item._id !== id));
             setSuccess("Item deleted successfully!");
         } catch (error) {
             console.error('Error deleting data:', error);
@@ -262,85 +111,103 @@ function Coursedata() {
         }
     };
 
-    // Reset the form
     const resetForm = () => {
         setNewItem("");
         setImageFile(null);
         setImageAlt("");
         setImageName("");
-        setEditItemId(null); // Reset edit item ID
+        setEditItemId(null);
     };
 
-    // Prepare the form for editing an item
-    const handleEdit = (item: never) => {
-        setNewItem(item.name);
-        setImageAlt(item.imageAlt);
-        setImageName(item.imageName);
-        setEditItemId(item._id); // Set the current item's ID for editing
-        setImageFile(null); // Reset image file to avoid sending a new image during editing
+    const handleEdit = (item: Course) => {
+        setNewItem(item.title); // Use title instead of name
+        setImageAlt(item.duration); // Use duration for imageAlt
+        setImageName(item.description); // Use description for imageName
+        setEditItemId(item._id);
+        setImageFile(null); // Clear file on edit
     };
 
     return (
-        <div className="justify-center items-center relative">
-            <h1 className='absolute'>Course Data</h1>
+        <div className="flex flex-col items-center justify-center p-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-black min-h-screen">
+            <h1 className='text-2xl font-bold mb-4'>Course Data</h1>
             <input
                 type="text"
                 value={newItem}
                 onChange={(e) => setNewItem(e.target.value)}
-                placeholder="Course Name"
+                placeholder="Course Title" // Changed placeholder to Title
+                className="mb-2 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full max-w-md"
             />
             <input
                 type="file"
-                onChange={(e) => setImageFile(e.target.files[0])}
+                onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                        setImageFile(file);
+                    }
+                }}
+                className="mb-2 p-2 border border-gray-300 dark:border-gray-600 rounded-md"
             />
             {imageFile && (
-                <div>
+                <div className="mb-2">
                     <h3>Image Preview:</h3>
-                    <img src={URL.createObjectURL(imageFile)} alt="Preview" style={{ width: '100px', height: '100px' }} />
+                    <img src={URL.createObjectURL(imageFile)} alt="Preview" className="w-24 h-24" />
                 </div>
             )}
             <input
                 type="text"
                 value={imageAlt}
                 onChange={(e) => setImageAlt(e.target.value)}
-                placeholder="Enter image alt text"
+                placeholder="Enter Course Duration" // Changed placeholder to Duration
+                className="mb-2 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full max-w-md"
             />
             <input
                 type="text"
                 value={imageName}
                 onChange={(e) => setImageName(e.target.value)}
-                placeholder="Course Content"
+                placeholder="Course Description" // Changed placeholder to Description
+                className="mb-2 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full max-w-md"
             />
-            <button onClick={editItemId ? () => editData(editItemId) : addData} disabled={uploading}>
+            <button onClick={editItemId ? () => editData(editItemId) : addData} disabled={uploading}
+                className={`mb-2 p-2 text-white rounded-md w-full max-w-md ${uploading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}>
                 {uploading ? "Uploading..." : editItemId ? "Edit Item" : "Add Item"}
             </button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
-            <table>
+            {error && <p className="text-red-500 mb-2">{error}</p>}
+            {success && <p className="text-green-500 mb-2">{success}</p>}
+            <table className="min-w-full border border-gray-300 dark:border-gray-600">
                 <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Image</th>
-                        <th>Action</th>
+                    <tr className="bg-gray-200 dark:bg-gray-700">
+                        <th className="p-2 border border-gray-300 dark:border-gray-600">Title</th> {/* Changed Name to Title */}
+                        <th className="p-2 border border-gray-300 dark:border-gray-600">Image</th>
+                        <th className="p-2 border border-gray-300 dark:border-gray-600">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((item) => (
-                        <tr key={item._id}>
-                            <td>{item.name} - {item.imageName}</td>
-                            <td>
+                    {data.length > 0 ? data.map((item) => (
+                        <tr key={item._id} className="border-b dark:border-gray-600">
+                            <td className="p-2 border border-gray-300 dark:border-gray-600">{item.title} - {item.description}</td>
+                            <td className="p-2 border border-gray-300 dark:border-gray-600">
                                 <img
                                     src={`http://localhost:5000/uploads/${item.image}`}
-                                    alt={item.imageAlt}
-                                    style={{ width: '50px' }}
+                                    alt={item.title} 
+                                    className="w-16 h-16"
                                 />
                             </td>
-                            <td>
-                                <button onClick={() => handleEdit(item)}>Edit</button>
-                                <button onClick={() => deleteData(item._id)}>Delete</button>
+                            <td className="p-2 border border-gray-300 dark:border-gray-600">
+                                <button 
+                                    onClick={() => handleEdit(item)} // Trigger edit on click
+                                    className="mr-2 p-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md">Edit
+                                </button>
+                                <button 
+                                    onClick={() => deleteData(item._id)} // Trigger delete on click
+                                    className="p-1 bg-red-500 hover:bg-red-600 text-white rounded-md">Delete
+                                </button>
                             </td>
                         </tr>
-                    ))}
+                    )) : (
+                        <tr>
+                            <td colSpan={3} className="text-center">No courses available</td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
         </div>
