@@ -1,191 +1,93 @@
 import React, { useContext, useState } from 'react';
-import { AuthContext } from '../context/authContext'; // Adjust the import path
+import { AuthContext } from '../context/authContext'; // Adjust the import path if necessary
 import Logout from './LogoutButton';
+import { Link, useNavigate } from 'react-router-dom';
+
 const LoginForm = () => {
-  // Use the AuthContext and check if it exists
   const authContext = useContext(AuthContext);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   if (!authContext) {
     throw new Error("AuthContext must be used within an AuthProvider");
   }
 
-  const { login, isAuthenticated } = authContext; // Destructure after the check
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { login, isAuthenticated } = authContext;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(email, password);  // Call login function from context
-      // Navigate or update UI after successful login
+      await login(username, password);  // Call login function from context
+      navigate('/courses'); // Redirect after successful login
     } catch (error) {
       console.error('Login failed:', error);
     }
   };
 
   return isAuthenticated ? (
-    <p>You are logged in! <Logout/></p>
+    <p>You are logged in! <Logout /></p>
   ) : (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
+    <main>
+      <div className="flex bg-slate-900 items-center h-screen px-2 sm:px-0">
+        <form onSubmit={handleSubmit} className="bg-gray-100 w-full max-w-sm sm:max-w-xl mx-auto p-4 rounded-xl shadow-md">
+          <div className="px-4 m-4 text-center">
+            <h2 className="text-xl font-bold">Login to your account</h2>
+          </div>
+
+          <div className="inputs p-4 w-full">
+            <div className="grid grid-cols-1 max-w-md mx-auto">
+              <div className="form-group gap-2">
+                <label className="block my-2" htmlFor="username">Username:</label>
+                <input
+                  className="w-full border-2 rounded-md px-3 py-2 my-1 shadow-sm"
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your username"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="block my-2" htmlFor="password">Password:</label>
+                <div className="relative">
+                  <input
+                    className="w-full border-2 rounded-md px-3 py-2 my-1 shadow-sm"
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-600 dark:text-neutral-300"
+                    aria-label="Show password"
+                  >
+                    {/* Password visibility toggle icon can be added here */}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true" className="size-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <button className="w-full bg-blue-700 text-gray-50 rounded-md shadow-sm px-3 py-2 my-4 hover:bg-blue-600" type="submit">
+                Login
+              </button>
+              <Link className="w-full bg-blue-700 text-gray-50 rounded-md shadow-sm px-3 py-2 my-4 hover:bg-blue-600" type="submit" to={'/register'}>
+              Register
+              </Link>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
   );
 };
 
 export default LoginForm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // /src/components/Login
-// import React, { useContext, useState } from 'react';
-// import { AuthContext } from '../context/authContext';
-// import { useNavigate } from 'react-router-dom';
-
-// const Login = () => {
-//   const { login } = useContext(AuthContext)!;
-//   const [username, setUsername] = useState('');
-//   const [password, setPassword] = useState('');
-//  const navigate = useNavigate(); // Now use useNavigate here
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     try {
-//       await login(username, password);
-//     navigate('/courses'); 
-//     } catch (error) {
-//       console.error('Login failed', error);
-//     }
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <input 
-//         type="text" 
-//         value={username} 
-//         onChange={(e) => setUsername(e.target.value)} 
-//         placeholder="Username" 
-//       />
-//       <input 
-//         type="password" 
-//         value={password} 
-//         onChange={(e) => setPassword(e.target.value)} 
-//         placeholder="Password" 
-//       />
-//       <button type="submit">Login</button>
-//     </form>
-//   );
-// };
-
-// export default Login;
-
-
-
-
-
-
-// import React, { useContext, useState } from 'react';
-// import { AuthContext } from '../context/AuthContext';
-
-// const LoginForm: React.FC = () => {
-//   const authContext = useContext(AuthContext);
-
-//   // State for form input values and mode (login or register)
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [isRegistering, setIsRegistering] = useState(false); // To toggle between login and register mode
-
-//   // Handle form submission for login or register
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (authContext) {
-//       try {
-//         if (isRegistering) {
-//           await authContext.register(email, password);
-//           alert('Registration successful! Please log in.');
-//           setIsRegistering(false); // Switch back to login mode after successful registration
-//         } else {
-//           await authContext.login(email, password);
-//           alert('Login successful');
-//         }
-//       } catch (error) {
-//         alert(isRegistering ? 'Registration failed' : 'Login failed');
-//       }
-//     }
-//   };
-
-//   // Toggle between login and register modes
-//   const toggleMode = () => {
-//     setIsRegistering((prev) => !prev);
-//   };
-
-//   return (
-//     <div className="flex items-center justify-center min-h-screen bg-gray-900">
-//       <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-//         <h2 className="text-3xl font-bold text-white text-center mb-6">
-//           {isRegistering ? 'Register' : 'Login'}
-//         </h2>
-//         <form onSubmit={handleSubmit} className="space-y-6">
-//           <div>
-//             <label className="block text-gray-400 mb-2">Email:</label>
-//             <input
-//               type="email"
-//               value={email}
-//               onChange={(e) => setEmail(e.target.value)}
-//               required
-//               className="w-full p-3 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-gray-400 mb-2">Password:</label>
-//             <input
-//               type="password"
-//               value={password}
-//               onChange={(e) => setPassword(e.target.value)}
-//               required
-//               className="w-full p-3 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
-//             />
-//           </div>
-//           <button
-//             type="submit"
-//             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition duration-300"
-//           >
-//             {isRegistering ? 'Register' : 'Login'}
-//           </button>
-//         </form>
-//         <button
-//           onClick={toggleMode}
-//           className="mt-6 w-full text-sm text-blue-400 hover:underline"
-//         >
-//           {isRegistering ? 'Already have an account? Log in' : "Don't have an account? Register"}
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LoginForm;
