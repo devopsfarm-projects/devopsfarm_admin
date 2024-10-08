@@ -1,5 +1,5 @@
 // /src/components/CourseList.tsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getCourses } from '../api/api';
 import { Course } from '../types';
 

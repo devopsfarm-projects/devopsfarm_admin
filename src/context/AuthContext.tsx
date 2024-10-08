@@ -1,3 +1,45 @@
+// import React, { createContext, useContext, useState } from 'react';
+
+// interface AuthContextProps {
+//   user: any;
+//   setUser: (user: any) => void;
+//   login: (token: string) => void;
+//   logout: () => void;
+// }
+
+// const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+
+// export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+//   const [user, setUser] = useState<any>(null);
+
+//   const login = (token: string) => {
+//     localStorage.setItem('token', token);
+//     // Decode and set user from token if needed
+//   };
+
+//   const logout = () => {
+//     localStorage.removeItem('token');
+//     setUser(null);
+//   };
+
+//   return (
+//     <AuthContext.Provider value={{ user, setUser, login, logout }}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// export const useAuth = () => {
+//   const context = useContext(AuthContext);
+//   if (!context) {
+//     throw new Error('useAuth must be used within an AuthProvider');
+//   }
+//   return context;
+// };
+
+
+
+
 // /src/context/authContext.tsx
 import { createContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import axios from 'axios';
@@ -30,24 +72,53 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // Login function
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await axios.post('http://localhost:5000/auth', {
-        email,
-        password,
-      });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);        // Store token in local storage
-      localStorage.setItem('user', user.email);    // Store user in local storage
-      setToken(token);                             // Update token in state
-      setUser(user.email);                         // Update user in state
-      setIsAuthenticated(true);                    // Mark user as authenticated
-    } catch (error) {
-      console.error('Login failed', error);
-      throw error;
+
+// Login function
+const login = async (email: string, password: string) => {
+  try {
+    const response = await axios.post('http://localhost:5000/auth', {
+      email,
+      password,
+    });
+    console.log(response.data); // Log response to debug the issue
+    const { token, user } = response.data;
+
+    if (!user || !token) {
+      throw new Error('Invalid response format');
     }
-  };
+
+    localStorage.setItem('token', token);        // Store token in local storage
+    localStorage.setItem('user', user.email);    // Store user in local storage
+    setToken(token);                             // Update token in state
+    setUser(user.email);                         // Update user in state
+    setIsAuthenticated(true);                    // Mark user as authenticated
+  } catch (error) {
+    console.error('Login failed', error);
+    throw error;
+  }
+};
+
+
+
+
+  // Login function
+  // const login = async (email: string, password: string) => {
+  //   try {
+  //     const response = await axios.post('http://localhost:5000/auth', {
+  //       email,
+  //       password,
+  //     });
+  //     const { token, user } = response.data;
+  //     localStorage.setItem('token', token);        // Store token in local storage
+  //     localStorage.setItem('user', user.email);    // Store user in local storage
+  //     setToken(token);                             // Update token in state
+  //     setUser(user.email);                         // Update user in state
+  //     setIsAuthenticated(true);                    // Mark user as authenticated
+  //   } catch (error) {
+  //     console.error('Login failed', error);
+  //     throw error;
+  //   }
+  // };
 
   // Register function
   const register = async (name: string, email: string, password: string) => {

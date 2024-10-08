@@ -1,3 +1,62 @@
+// import React, { useState } from 'react';
+// import { useAuth } from '../context/authContext';
+
+// const Login: React.FC = () => {
+//   const [email, setEmail] = useState('');
+//   const [password, setPassword] = useState('');
+//   const { login } = useAuth();
+
+//   const handleLogin = async (e: React.FormEvent) => {
+//     e.preventDefault();
+
+//     const response = await fetch('http://localhost:5000/auth', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ email, password }),
+//     });
+
+//     if (response.ok) {
+//       const data = await response.json();
+//       login(data.token);
+//       // Redirect or do something on successful login
+//     } else {
+//       // Handle error
+//       console.error('Login failed');
+//     }
+//   };
+
+//   return (
+//     <form onSubmit={handleLogin} className="max-w-md mx-auto">
+//       <div>
+//         <label>Email</label>
+//         <input
+//           type="email"
+//           value={email}
+//           onChange={(e) => setEmail(e.target.value)}
+//           className="border p-2"
+//         />
+//       </div>
+//       <div>
+//         <label>Password</label>
+//         <input
+//           type="password"
+//           value={password}
+//           onChange={(e) => setPassword(e.target.value)}
+//           className="border p-2"
+//         />
+//       </div>
+//       <button type="submit" className="bg-blue-500 text-white p-2">
+//         Login
+//       </button>
+//     </form>
+//   );
+// };
+
+// export default Login;
+
+
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/authContext'; // Adjust the import path if necessary
 import Logout from './LogoutButton';
@@ -79,9 +138,12 @@ const LoginForm = () => {
               <button className="w-full bg-blue-700 text-gray-50 rounded-md shadow-sm px-3 py-2 my-4 hover:bg-blue-600" type="submit">
                 Login
               </button>
-              <Link className="w-full bg-blue-700 text-gray-50 rounded-md shadow-sm px-3 py-2 my-4 hover:bg-blue-600" type="submit" to={'/register'}>
+              
+              <Link  to={'/register'}>
+              <button className="w-full bg-blue-700 text-gray-50 rounded-md shadow-sm px-3 py-2 my-4 hover:bg-blue-600" >
+              
               Register
-              </Link>
+             </button> </Link>
             </div>
           </div>
         </form>
